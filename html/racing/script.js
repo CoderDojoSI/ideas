@@ -276,3 +276,11 @@ function remove(element) {
   // Remove the element 'element' from DOM (HTML)
   return element.parentNode.removeChild(element);
 }
+
+// Preload images...
+(new Image()).src = 'car-crash.png';
+(new Image()).src = 'car-blue.png';
+for (var i=1; i<9; ++i) {
+  (new Image()).src = 'car-back' + i + '.png';
+  (new Image()).src = 'car-front' + i + '.png';
+}
