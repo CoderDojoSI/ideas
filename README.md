@@ -1,4 +1,4 @@
 CoderDojo
 =========
 
-Lectures, examples, and excercises for Slovene CoderDojo events.
+Demo examples: http://kernc.github.com/CoderDojo/
