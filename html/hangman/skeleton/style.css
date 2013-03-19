@@ -20,8 +20,6 @@
 #secret-phrase > span {
   border: 1px solid black;
   display: inline-block;
-  width: 2em;
-  height: 2em;
   margin-left: 5px;
   margin-top: 5px;
   text-align: center;
@@ -34,16 +32,12 @@
 }
 
 #secret-phrase > span > b {
-  display:inline-block;
-  margin:5px;
-  visibility: hidden;
+  /* TODO: Set 'visibility' to 'hidden' */
+  display: inline-block;
+  margin: 5px;
 }
 
 #secret-phrase > span.space > b,
 #secret-phrase > span.visible > b {
-  visibility: visible;
-}
-
-#gallows {
-  height: 10em;
+  /* TODO: Set 'visibility' to 'visible' */
 }
