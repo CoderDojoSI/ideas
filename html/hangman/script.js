@@ -1,69 +1,130 @@
 
-var phrases = 'Prazna hvala se pod mizo valja\n\
-Po dežju posije sonce'.split('\n');
+// A list of phrases, proverbs...
+var phrases = [
+  'Lastna hvala se pod mizo valja',
+  'Po dežju posije sonce',
+  'Kar seješ, to žanješ',
+  'Rana ura, zlata ura',
+  'Riba pri glavi smrdi',
+  'Kuj železo dokler je vroče',
+  'Pametnemu malo besed veliko pove',
+  'Vsak je svoje sreče kovač',
+  'Jabolko ne pade daleč od drevesa',
+  'Vse se zmore, če se hoče',
+  'Pomagaj si sam in bog ti bo pomagal',
+  'V vinu je resnica',
+  'Ura zamujena ne vrne se nobena',
+  'Obleka ne naredi človeka',
+  'Več glav več ve',
+  'Lepa beseda lepo mesto najde',
+  'Kdor čaka, dočaka',
+  'Stoječa voda se usmradi',
+  'Lonec lončarja hvali',
+  'Pes, ki laja, ne grize',
+  'Laž ima kratke noge',
+  'Hudič v sili še muhe žre',
+  'Tiha voda bregove dere',
+  'Dobro blago se samo hvali',
+  'Upogibaj drevo dokler je mlado',
+  'Kdor vpraša, ne zaide'
+];
 
 function select_random_phrase(phrases) {
   return phrases[Math.floor(Math.random() * phrases.length)];
 }
 
-var secret, chars, used,
-    used_div = document.getElementById('used-letters'),
-    gallows_div = document.getElementById('gallows');
+// Initialize variables
+var secret, char_boxes, already_used,
+    history = document.getElementById('used-letters'),
+    gallows = document.getElementById('gallows');
 
 function init() {
+  // Set secret to random phrase from 'phrases'
   secret = select_random_phrase(phrases);
+  // Build HTML string representing char boxes
   var str = '';
   for (var i=0; i<secret.length; ++i)
+    // Treat spaces separately (e.g. show by default)
     if (secret[i] == ' ')
       str += '<span class="space"><b>&nbsp;</b></span>';
-    else
-      str += '<span><b>' + secret[i] + '</b></span>';
+    // Display any _invalid_ characters (e.g. punctuation)
+    else if (!is_valid_charCode(secret[i].charCodeAt(0)))
+      str += '<span class="visible"><b>' + secret[i] + '</b></span>';
+    // Else, add the character, but hidden
+    else str += '<span><b>' + secret[i] + '</b></span>';
+  // Add HTML string into document model
   document.getElementById('secret-phrase').innerHTML = str;
-  chars = document.getElementById('secret-phrase').getElementsByTagName('b');
-  secret = secret.toUpperCase();
-  gallows_div.innerHTML = '';
-  used_div.innerHTML = '';
-  used = {};
-  current = 0;
+  // 'Grab' 'char boxes' into an array
+  char_boxes = document.getElementById('secret-phrase').getElementsByTagName('b');
+  // Save secret string in lower case for easier comparison
+  secret = secret.toLowerCase();
+  // (Re)set defaults
+  gallows.innerHTML = '';
+  history.innerHTML = '';
+  already_used = {};
+  hangman.current = 0;
 }
-init();
 
-function code_to_char(keyCode) {
-  var sumniki = {186:'Č', 219:'Š', 220:'Ž'};
-  if (keyCode >= 65 && keyCode <= 90)
-    return String.fromCharCode(keyCode);
-  else if (keyCode in sumniki)
-    return sumniki[keyCode]
-  else
-    return null
+// === Event-driven programming ===
+// Return true if charCode is of a valid letter
+function is_valid_charCode(charCode) {
+  // Reference decimal values at
+  // http://en.wikipedia.org/wiki/ASCII#ASCII_printable_characters
+  return  65 <= charCode && charCode <= 90  ||
+          97 <= charCode && charCode <= 122 ||
+          127 < charCode;
 }
-window.onkeydown = function (event) {
-  var char = code_to_char(event.keyCode || event.which);
-  if (! char)
-    return;
-  var no_match = true;
+window.onkeypress = function (event) {
+  // If charCode is not valid, return
+  if (!is_valid_charCode(event.charCode)) return;
+  // Convert charCode into printable Unicode character
+  var char = String.fromCharCode(event.charCode).toLowerCase();
+  // If char 'char' was already considered, return
+  if (char in already_used) return;
+  // Otherwise, mark 'char' as used
+  already_used[char] = true;
+
+  // Test if char is present in the secret phrase...
+  var have_match = false;
   for (var i=0; i<secret.length; ++i)
     if (secret[i] == char) {
-      chars[i].style.visibility = 'visible';
-      no_match = false;
+      // ...if so, mark its box as visible
+      char_boxes[i].style.visibility = 'visible';
+      have_match = true;
     }
-  if (char in used)
-    return;
-  used[char] = true;
-  if (no_match) {
-    used_div.innerHTML += '<del>' + char + '</del> ';
-    // draw next hangman
-    gallows_div.innerHTML = hangman[current++];
-    if (current == hangman.length) {
+
+  // If char WAS present in the secret phrase...
+  if (have_match) {
+    // ...add it to history
+    history.innerHTML += char + ', ';
+    // Check whether all char boxes are now visible (=> Success!)
+    if (is_game_success())
+      return alert('Bravo!');
+  } else {
+    // ...otherwise, add it to history striked-through
+    history.innerHTML += '<del>' + char + '</del> ';
+    // ...and draw the next hangman
+    gallows.innerHTML = hangman[hangman.current++];
+    // If this is the last hangman, game over
+    if (hangman.current == hangman.length) {
       alert('Game over!');
       init();
     }
-  } else {
-    used_div.innerHTML += char + ', ';
   }
 }
+// === /Event-driven programming ===
 
-var current = 0;
+function is_game_success() {
+  is_hidden = function (element) {
+    return window.getComputedStyle(element).getPropertyValue('visibility') != 'visible';
+  }
+  // If ALL boxes are visible, game win!
+  for (var i=0; i<char_boxes.length; ++i)
+    if (is_hidden(char_boxes[i]))  // ...otherwise
+      return false;
+  return true;
+}
+
 var hangman = [
 '\n\
 \n\
@@ -77,7 +138,7 @@ _______',
 \n\
 \n\
 \n\
-\n\
+   _\n\
 __/_\\__',
 '\n\
    |\n\
@@ -85,33 +146,38 @@ __/_\\__',
    |\n\
    |\n\
    |\n\
-__/|\\__',
+__/_\\__',
 '   ______\n\
    |\n\
    |\n\
    |\n\
    |\n\
    |\n\
-__/|\\__',
+__/_\\__',
 '   ______\n\
    | /\n\
    |/\n\
    |\n\
    |\n\
    |\n\
-__/|\\__',
+__/_\\__',
 '   ______\n\
    | /  |\n\
    |/\n\
    |\n\
    |\n\
    |\n\
-__/|\\__',
+__/_\\__',
 '   ______\n\
    | /  |\n\
    |/   0\n\
-   |   /|\\\n\
+   |   /I\\\n\
    |   / \\\n\
    |\n\
-__/|\\__'
+__/_\\__'
 ];
+hangman.current = 0;  // Index of the current hangman 'image' / state
+
+
+init();
+

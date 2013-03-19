@@ -9,13 +9,26 @@
   height: 2em;
   margin-left: 5px;
   margin-top: 5px;
-  text-align:center;
+  text-align: center;
 }
-#secret-phrase > span.space {
-  background: silver;
+
+#secret-phrase > span.space,
+#secret-phrase > span.visible {
+  border: 0px;
+  width: 1em;
 }
 
 #secret-phrase > span > b {
-  vertical-align:middle;
+  display:inline-block;
+  margin:5px;
   visibility: hidden;
+}
+
+#secret-phrase > span.space > b,
+#secret-phrase > span.visible > b {
+  visibility: visible;
+}
+
+#gallows {
+  height: 10em;
 }
