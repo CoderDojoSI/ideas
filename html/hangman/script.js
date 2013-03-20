@@ -79,16 +79,16 @@ window.onkeypress = function (event) {
   // If charCode is not valid, return
   if (!is_valid_charCode(charCode)) return;
   // Convert charCode into printable Unicode character
-  var char = String.fromCharCode(charCode).toLowerCase();
+  var ch = String.fromCharCode(charCode).toLowerCase();
   // If char 'char' was already considered, return
-  if (char in already_used) return;
+  if (ch in already_used) return;
   // Otherwise, mark 'char' as used
   already_used[char] = true;
 
   // Test if char is present in the secret phrase...
   var have_match = false;
   for (var i=0; i<secret.length; ++i)
-    if (secret[i] == char) {
+    if (secret[i] == ch) {
       // ...if so, mark its box as visible
       char_boxes[i].style.visibility = 'visible';
       have_match = true;
@@ -97,13 +97,13 @@ window.onkeypress = function (event) {
   // If char WAS present in the secret phrase...
   if (have_match) {
     // ...add it to history
-    history.innerHTML += char + ', ';
+    history.innerHTML += ch + ', ';
     // Check whether all char boxes are now visible (=> Success!)
     if (is_game_success())
       return alert('Bravo!');
   } else {
     // ...otherwise, add it to history striked-through
-    history.innerHTML += '<del>' + char + '</del>, ';
+    history.innerHTML += '<del>' + ch + '</del>, ';
     // ...and draw the next hangman
     gallows.innerHTML = hangman[hangman.current++];
     // If this is the last hangman, game over
