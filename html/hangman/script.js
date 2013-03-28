@@ -83,7 +83,7 @@ window.onkeypress = function (event) {
   // If char 'char' was already considered, return
   if (ch in already_used) return;
   // Otherwise, mark 'char' as used
-  already_used[char] = true;
+  already_used[ch] = true;
 
   // Test if char is present in the secret phrase...
   var have_match = false;
