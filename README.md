@@ -1,4 +1,4 @@
 CoderDojo
 =========
 
-Demo examples: http://kernc.github.com/CoderDojo/
+Demo examples: http://demo.coderdojo.si
